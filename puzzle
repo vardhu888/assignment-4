@@ -1,0 +1,48 @@
+from itertools import permutations
+
+def solve_cryptarithm():
+    letters = ('S', 'E', 'N', 'D', 'M', 'O', 'R', 'Y')
+
+    for perm in permutations(range(10), len(letters)):
+        mapping = dict(zip(letters, perm))
+
+        # Leading digits cannot be zero
+        if mapping['S'] == 0 or mapping['M'] == 0:
+            continue
+
+        SEND = (mapping['S']*1000 + mapping['E']*100 +
+                mapping['N']*10 + mapping['D'])
+
+        MORE = (mapping['M']*1000 + mapping['O']*100 +
+                mapping['R']*10 + mapping['E'])
+
+        MONEY = (mapping['M']*10000 + mapping['O']*1000 +
+                 mapping['N']*100 + mapping['E']*10 + mapping['Y'])
+
+        if SEND + MORE == MONEY:
+            print("\n Solution Found\n")
+
+            print(" Letter → Digit Mapping:")
+            for k in sorted(mapping):
+                print(f"  {k} = {mapping[k]}")
+
+            print("\n Substitution:")
+            print(f"  SEND  = {SEND}")
+            print(f"  MORE  = {MORE}")
+            print(f"  MONEY = {MONEY}")
+
+            print("\n Verification:")
+            print(f"   {SEND}")
+            print(f"+  {MORE}")
+            print("  " + "-"*6)
+            print(f"  {MONEY}")
+
+            print("\n✔ Result Verified: "
+                  f"{SEND} + {MORE} = {MONEY}")
+
+            return
+
+    print("No solution found")
+
+
+solve_cryptarithm()
