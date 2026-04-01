@@ -1,0 +1,102 @@
+# Telangana Map Coloring using CSP (Backtracking)
+
+districts = [
+    "Adilabad","Komaram Bheem","Mancherial","Nirmal","Nizamabad",
+    "Jagitial","Peddapalli","Karimnagar","Rajanna Sircilla","Kamareddy",
+    "Sangareddy","Medak","Siddipet","Jangaon","Yadadri",
+    "Hyderabad","Medchal","Rangareddy","Vikarabad",
+    "Mahabubnagar","Narayanpet","Wanaparthy","Nagarkurnool","Jogulamba Gadwal",
+    "Nalgonda","Suryapet","Khammam","Bhadradri Kothagudem",
+    "Mulugu","Mahabubabad","Jayashankar","Warangal Rural","Hanamkonda"
+]
+
+colors = ["Red", "Green", "Blue", "Yellow"]
+
+# More complete neighbor relationships
+neighbors = {
+
+    "Adilabad": ["Nirmal","Komaram Bheem","Mancherial"],
+    "Komaram Bheem": ["Adilabad","Mancherial"],
+    "Mancherial": ["Komaram Bheem","Peddapalli","Jayashankar","Adilabad"],
+    "Nirmal": ["Adilabad","Nizamabad","Jagitial"],
+    "Nizamabad": ["Nirmal","Kamareddy","Jagitial"],
+    "Kamareddy": ["Nizamabad","Medak","Siddipet"],
+
+    "Jagitial": ["Nirmal","Karimnagar","Peddapalli","Rajanna Sircilla","Nizamabad"],
+    "Peddapalli": ["Jagitial","Karimnagar","Mancherial"],
+    "Karimnagar": ["Jagitial","Peddapalli","Rajanna Sircilla","Siddipet"],
+    "Rajanna Sircilla": ["Karimnagar","Siddipet","Jagitial"],
+
+    "Medak": ["Kamareddy","Sangareddy","Siddipet"],
+    "Sangareddy": ["Medak","Vikarabad","Rangareddy"],
+    "Siddipet": ["Medak","Rajanna Sircilla","Karimnagar","Jangaon","Kamareddy"],
+
+    "Jangaon": ["Siddipet","Warangal Rural","Yadadri","Hanamkonda"],
+    "Yadadri": ["Jangaon","Nalgonda","Rangareddy","Suryapet"],
+
+    "Hyderabad": ["Rangareddy","Medchal"],
+    "Medchal": ["Hyderabad","Rangareddy"],
+    "Rangareddy": ["Hyderabad","Medchal","Vikarabad","Yadadri","Mahabubnagar"],
+    "Vikarabad": ["Sangareddy","Rangareddy"],
+
+    "Mahabubnagar": ["Narayanpet","Wanaparthy","Rangareddy"],
+    "Narayanpet": ["Mahabubnagar","Jogulamba Gadwal"],
+    "Wanaparthy": ["Mahabubnagar","Nagarkurnool"],
+    "Nagarkurnool": ["Wanaparthy","Nalgonda"],
+    "Jogulamba Gadwal": ["Narayanpet","Mahabubnagar"],
+
+    "Nalgonda": ["Yadadri","Suryapet","Nagarkurnool"],
+    "Suryapet": ["Nalgonda","Khammam","Yadadri"],
+    "Khammam": ["Suryapet","Bhadradri Kothagudem","Mahabubabad"],
+    "Bhadradri Kothagudem": ["Khammam","Mulugu"],
+
+    "Mulugu": ["Bhadradri Kothagudem","Jayashankar"],
+    "Jayashankar": ["Mulugu","Mancherial","Warangal Rural"],
+
+    "Mahabubabad": ["Warangal Rural","Khammam"],
+    "Warangal Rural": ["Jangaon","Mahabubabad","Hanamkonda","Jayashankar"],
+    "Hanamkonda": ["Warangal Rural","Jangaon"]
+}
+
+# Check if safe
+def is_safe(d, c, result):
+    for n in neighbors.get(d, []):
+        if n in result and result[n] == c:
+            return False
+    return True
+
+# Backtracking
+def solve(result):
+    
+    if len(result) == len(districts):
+        return True
+    
+    for d in districts:
+        if d not in result:
+            
+            for c in colors:
+                if is_safe(d, c, result):
+                    result[d] = c
+                    
+                    if solve(result):
+                        return True
+                    
+                    result.pop(d)
+            
+            return False
+
+# Run
+result = {}
+solve(result)
+
+# Print result
+print("\nTelangana Map Coloring:\n")
+for d in districts:
+    print(f"{d:25} -> {result[d]}")
+
+# Extra: check conflicts
+print("\nChecking for conflicts...\n")
+for d in neighbors:
+    for n in neighbors[d]:
+        if result[d] == result[n]:
+            print("Conflict between", d, "and", n)
